@@ -1,1 +1,2 @@
 mjaf-api-production.up.railway.app
+~/.platformio/penv/bin/pio run --target upload
