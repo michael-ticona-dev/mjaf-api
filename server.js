@@ -8,29 +8,40 @@ app.use(express.json());
 
 let sensorData = {
     temp: 0,
-    hum: 0
+    hum: 0,
+    soil: 0
 };
 
-// recibir datos del ESP32
+// Recibir datos del ESP32
 app.post("/api/sensor", (req, res) => {
 
-    sensorData = req.body;
+    const { temp, hum, soil } = req.body;
 
-    console.log(sensorData);
+    sensorData = {
+        temp,
+        hum,
+        soil
+    };
+
+    console.log("📡 Datos recibidos:", sensorData);
 
     res.json({
         ok: true
     });
 });
 
-// obtener datos
+// Obtener últimos datos
 app.get("/api/data", (req, res) => {
-
     res.json(sensorData);
+});
+
+// Ruta principal
+app.get("/", (req, res) => {
+    res.send("Sensor API funcionando 🚀");
 });
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log("Servidor iniciado");
-});1
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Servidor iniciado en puerto ${PORT}`);
+});
