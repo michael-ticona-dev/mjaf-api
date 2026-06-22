@@ -3,10 +3,11 @@ const cors = require("cors");
 
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// almacenamiento simple
+// almacenamiento simple (RAM)
 let latestData = {
   temp: null,
   hum: null,
@@ -14,7 +15,12 @@ let latestData = {
   time: null
 };
 
-// recibir datos ESP32
+// 🌐 HOME (importante para Railway)
+app.get("/", (req, res) => {
+  res.send("Sensor API running 🚀");
+});
+
+// 📡 recibir datos ESP32
 app.post("/api/sensor", (req, res) => {
   const { temp, hum, soil } = req.body;
 
@@ -22,26 +28,22 @@ app.post("/api/sensor", (req, res) => {
     temp,
     hum,
     soil,
-    time: new Date()
+    time: new Date().toISOString()
   };
 
-  console.log("📡 Datos:", latestData);
+  console.log("📡 Datos recibidos:", latestData);
 
-  res.json({ ok: true });
+  res.json({ ok: true, data: latestData });
 });
 
-// ver datos
+// 📊 ver últimos datos
 app.get("/api/sensor", (req, res) => {
   res.json(latestData);
 });
 
-// home
-app.get("/", (req, res) => {
-  res.send("Sensor API running 🚀");
-});
+// ⚙️ PORT de Railway (CRÍTICO)
+const PORT = process.env.PORT;
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Servidor en puerto", PORT);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("🚀 Servidor corriendo en puerto:", PORT);
 });
